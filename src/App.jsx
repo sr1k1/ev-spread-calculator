@@ -1,27 +1,36 @@
-import { useState, useReducer, useEffect } from "react";
+import { useReducer, useEffect, createContext } from "react";
 import "./App.css";
 
 // Objects related to state management
 import {
-  reducer as calcReducer,
-  actions as calcActions,
-  initialState as calcInitialState,
+  reducer as pkmnEvReducer,
+  actions as pkmnEvActions,
+  initialState as pkmnEvInitialState,
 } from "./reducers/pkmnCalc.reducer.js";
 
 // Components
 import Header from "./shared/Header.jsx";
+import EvCalculatorWrapper from "./features/EvCalculator/EvCalculatorWrapper.jsx";
 
 // Pokemon Endpoints .json file
-import { pokemonEndpoints } from "./data/pokemonEndpoints.json";
+import { pkmnEndpoints } from "./data/pkmnEndpoints.json";
 
 // Helper functions
 import { fetchData, makeOptions } from "./services/helperFunctions.js";
 
-// Delete below import when ready to fetch from server
-import { pokemon } from "./temp_data/gen9ou.json";
+// Delete below import when ready to fetch from server --------------------------------------
+import pkmnSmogonSets from "./temp_data/gen9ou.json";
+
+// ------------------------------------------------------------------------------------------
+
+// ---------------- App Context -------------------- //
+export const appContext = createContext(null);
 
 function App() {
-  const [calcState, dispatch] = useReducer(calcReducer, calcInitialState);
+  const [pkmnEvState, dispatch] = useReducer(pkmnEvReducer, pkmnEvInitialState);
+
+  // Create reference to globalPkmnPool to pass into App Context.
+  let globalPkmnPool = pkmnEvState.globalPkmnPool;
 
   // ======================= Construct all fetch urls and tokens ========================== //
 
@@ -30,46 +39,35 @@ function App() {
   const token = `Bearer ${import.meta.env.VITE_KEY}`;
 
   // Smogon Pokemon Showdown
-  const urlShowdown = "https://data.pkmn.cc/stats/gen9ou.json";
+  const urlShowdown = "https://data.pkmn.cc/sets/gen9ou.json";
 
-  // ========= Data fetch from showdown API for common stat spreads and movesets ========= //
-
-  // Uncomment below when we are ready to fetch data straight from server
-  // useEffect(() => {
-  //   async function fetchPokemonSetData() {
-  //     const response = await fetch(urlShowdown);
-  //     const { pokemon } = await response.json();
-  //     dispatch({ type: calcActions.setPkmnPool, pokemon });
-
-  //     return;
-  //   }
-  //   fetchPokemonSetData();
-  // }, []);
-
-  // Delete lines below when we are ready to fetch from server
+  // ============================== Loading all Pokemon data ============================== //
   useEffect(() => {
-    dispatch({ type: calcActions.setPkmnPool, pokemon });
+    // Smogon data fetch (for popular EV spreads)
+    // -------------------------------------------------------------
+    // Uncomment below when we are ready to fetch data straight from server
+    // fetchData(urlShowdown).then((pkmnSmogonSets) =>
+    //   dispatch({ type: pkmnEvActions.setSmogonPkmnPool, pkmnSmogonSets }),
+    // );
+
+    // Delete lines below when we are ready to fetch from server
+    dispatch({ type: pkmnEvActions.setSmogonPkmnPool, pkmnSmogonSets });
+    // ------------------------------------------------------------
+    // PokeApi Endpoints for data on every pokemon
+    dispatch({ type: pkmnEvActions.setGlobalPkmnPool, pkmnEndpoints });
   }, []);
 
-  // ========= Data fetch from PokeAPI for Pokemon information endpoints =========== //
-  useEffect(() => {
-    async function fetchPokeApiData() {
-      const responseAirtable = await fetchData(
-        urlEndpoints,
-        makeOptions("GET", token),
-      );
-
-      console.log(responseAirtable);
-    }
-    fetchPokeApiData();
-    return;
-  }, []);
-  // --------------------------------------------------------- //
-
-  console.log(pokemonEndpoints);
   return (
     <>
-      <Header />
+      <appContext.Provider value={{ dispatch, pkmnEvActions, globalPkmnPool }}>
+        <div>
+          <Header />
+          <EvCalculatorWrapper
+            smogonPkmnPool={pkmnEvState.smogonPkmnPool}
+            isResultCalculated={pkmnEvState.isResultCalculated}
+          />
+        </div>
+      </appContext.Provider>
     </>
   );
 }

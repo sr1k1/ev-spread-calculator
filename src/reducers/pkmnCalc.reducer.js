@@ -1,18 +1,34 @@
 const actions = {
-  setPkmnPool: "setPkmnPool",
+  setSmogonPkmnPool: "setSmogonPkmnPool",
+  setGlobalPkmnPool: "setGlobalPkmnPool",
+  calculateResult: "calculateResult",
 };
 
 const initialState = {
-  pkmnPool: "",
+  smogonPkmnPool: "",
+  globalPkmnPool: "",
+  isResultCalculated: false,
 };
 
 // Potential room for error: reducer always uses initialState as default; resets progress?
 function reducer(state = initialState, action) {
   switch (action.type) {
-    case "setPkmnPool":
+    case "setSmogonPkmnPool":
       return {
         ...state,
-        pkmnPool: action.pokemon,
+        smogonPkmnPool: action.pkmnSmogonSets,
+      };
+
+    case "setGlobalPkmnPool":
+      return {
+        ...state,
+        globalPkmnPool: action.pkmnEndpoints,
+      };
+
+    case "calculateResult":
+      return {
+        ...state,
+        isResultCalculated: true,
       };
   }
   return;
