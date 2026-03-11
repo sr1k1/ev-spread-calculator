@@ -1,6 +1,9 @@
 import { useReducer, useEffect, createContext } from "react";
 import "./App.css";
 
+// React router components
+import { useLocation, Routes, Route } from "react-router";
+
 // Objects related to state management
 import {
   reducer as pkmnEvReducer,
@@ -10,7 +13,9 @@ import {
 
 // Components
 import Header from "./shared/Header.jsx";
-import EvCalculatorWrapper from "./features/EvCalculator/EvCalculatorWrapper.jsx";
+import FindPopularCountersPage from "./pages/FindPopularCountersPage.jsx";
+import EvCalcPage from "./pages/EvCalcPage.jsx";
+import About from "./pages/About.jsx";
 
 // Pokemon Endpoints .json file
 import { pkmnEndpoints } from "./data/pkmnEndpoints.json";
@@ -29,7 +34,33 @@ export const appContext = createContext(null);
 function App() {
   const [pkmnEvState, dispatch] = useReducer(pkmnEvReducer, pkmnEvInitialState);
 
-  // Create reference to globalPkmnPool to pass into App Context.
+  // Set App title using location of page
+  const userLocation = useLocation();
+
+  useEffect(() => {
+    switch (userLocation.pathname) {
+      case "/":
+        dispatch({
+          type: pkmnEvActions.setPageTitle,
+          pageTitle: "EV Spread Calculator",
+        });
+        break;
+
+      case "/counters":
+        dispatch({
+          type: pkmnEvActions.setPageTitle,
+          pageTitle: "Search Common Counters",
+        });
+      case "/about":
+        dispatch({ type: pkmnEvActions.setPageTitle, pageTitle: "About" });
+        break;
+      default:
+        dispatch({ type: pkmnEvActions.setPageTitle, pageTitle: "Not Found" });
+    }
+  }, [userLocation]);
+
+  // // Create reference to globalPkmnPool to pass into App Context.
+  // console.log(pkmnEvState.globalPkmnPool);
   let globalPkmnPool = pkmnEvState.globalPkmnPool;
 
   // ======================= Construct all fetch urls and tokens ========================== //
@@ -42,6 +73,7 @@ function App() {
   const urlShowdown = "https://data.pkmn.cc/sets/gen9ou.json";
 
   // ============================== Loading all Pokemon data ============================== //
+  let records = "";
   useEffect(() => {
     // Smogon data fetch (for popular EV spreads)
     // -------------------------------------------------------------
@@ -55,17 +87,46 @@ function App() {
     // ------------------------------------------------------------
     // PokeApi Endpoints for data on every pokemon
     dispatch({ type: pkmnEvActions.setGlobalPkmnPool, pkmnEndpoints });
+
+    async function fetchTeams() {
+      // Fetch airtable data
+      try {
+        dispatch({ type: pkmnEvActions.isLoading, loadState: true });
+        const options = makeOptions("GET", token);
+        records = await fetchData(urlTeamComp, options);
+
+        // Load into reducer to later load into app
+
+        return records;
+      } catch (error) {
+        dispatch({ type: pkmnEvActions.setLoadError, error });
+      } finally {
+        dispatch({ type: pkmnEvActions.isLoading, loadState: false });
+      }
+    }
+    fetchTeams();
   }, []);
 
+  console.log(records);
   return (
     <>
       <appContext.Provider value={{ dispatch, pkmnEvActions, globalPkmnPool }}>
         <div>
-          <Header />
-          <EvCalculatorWrapper
-            smogonPkmnPool={pkmnEvState.smogonPkmnPool}
-            isResultCalculated={pkmnEvState.isResultCalculated}
-          />
+          <Header title={pkmnEvState.pageTitle} />
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <EvCalcPage
+                  smogonPkmnPool={pkmnEvState.smogonPkmnPool}
+                  isResultCalculated={pkmnEvState.isResultCalculated}
+                />
+              }
+            />
+            <Route path="/counters" element={<FindPopularCountersPage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/*" />
+          </Routes>
         </div>
       </appContext.Provider>
     </>

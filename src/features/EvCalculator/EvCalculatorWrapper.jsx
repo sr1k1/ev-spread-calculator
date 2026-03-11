@@ -22,9 +22,9 @@ function EvCalculatorWrapper({ smogonPkmnPool, isResultCalculated }) {
   const urlPokeApi = "https://pokeapi.co/api/v2/pokemon/";
 
   // States to track user input
-  const [chosenPkmn, setChosenPkmn] = useState("great-tusk");
-  const [targetPkmn, setTargetPkmn] = useState("iron-treads");
-  const [counterType, setCounterType] = useState("");
+  const [chosenPkmn, setChosenPkmn] = useState("");
+  const [targetPkmn, setTargetPkmn] = useState("");
+  const [counterType, setCounterType] = useState("offensive");
 
   // States to track processed data from submitting form
   const [chosenPkmnApi, setChosenPkmnApi] = useState("");
@@ -71,19 +71,23 @@ function EvCalculatorWrapper({ smogonPkmnPool, isResultCalculated }) {
         <PkmnSelector
           selectorId="yourPokemon"
           label="Choose your Pokemon: "
-          fieldSetter={setChosenPkmn}
+          pkmn={chosenPkmn}
+          setPkmn={setChosenPkmn}
         />{" "}
         <br />
         <PkmnSelector
           selectorId="targetPokemon"
           label="Target Pokemon to counter/check: "
-          fieldSetter={setTargetPkmn}
+          pkmn={targetPkmn}
+          setPkmn={setTargetPkmn}
         />{" "}
         <br />
         <label htmlFor={"typeOfCounter"}></label>
         <select
           id={"typeOfCounter"}
-          onChange={(event) => setCounterType(event.target.value)}
+          onChange={(event) => {
+            setCounterType(event.target.value);
+          }}
         >
           <option value="offensive">Offensive</option>
           <option value="defensive">Defensive</option>
