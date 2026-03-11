@@ -24,7 +24,6 @@ function computeEvSpread(
       targetPkmnBS,
       targetEvSpread["evs"],
       natureStats[targetEvSpread["nature"]],
-      console.log("ho"),
     );
   }
 

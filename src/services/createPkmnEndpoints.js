@@ -20,8 +20,6 @@ async function createPkmnEndpoints() {
     pkmnIdMapping[pkmn.name] = splitUrl[idIx];
   }
 
-  console.log(pkmnIdMapping);
-
   return;
 }
 

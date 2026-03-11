@@ -59,9 +59,7 @@ function App() {
     }
   }, [userLocation]);
 
-  // // Create reference to globalPkmnPool to pass into App Context.
-  // console.log(pkmnEvState.globalPkmnPool);
-  let globalPkmnPool = pkmnEvState.globalPkmnPool;
+  // ============================== pkmnEvState elements to make global ===================== //
 
   // ======================= Construct all fetch urls and tokens ========================== //
 
@@ -96,6 +94,7 @@ function App() {
         records = await fetchData(urlTeamComp, options);
 
         // Load into reducer to later load into app
+        dispatch({ type: pkmnEvActions.loadTeam, records });
 
         return records;
       } catch (error) {
@@ -107,10 +106,15 @@ function App() {
     fetchTeams();
   }, []);
 
-  console.log(records);
   return (
     <>
-      <appContext.Provider value={{ dispatch, pkmnEvActions, globalPkmnPool }}>
+      <appContext.Provider
+        value={{
+          dispatch,
+          pkmnEvActions,
+          pkmnEvState,
+        }}
+      >
         <div>
           <Header title={pkmnEvState.pageTitle} />
           <Routes>

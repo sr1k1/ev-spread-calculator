@@ -18,7 +18,7 @@ import { appContext } from "../../App.jsx";
 
 function EvCalculatorWrapper({ smogonPkmnPool, isResultCalculated }) {
   // Import Pokemon pool to retrieve and fetch endpoints
-  const { dispatch, pkmnEvActions, globalPkmnPool } = useContext(appContext);
+  const { dispatch, pkmnEvActions, pkmnEvState } = useContext(appContext);
   const urlPokeApi = "https://pokeapi.co/api/v2/pokemon/";
 
   // States to track user input
@@ -35,8 +35,8 @@ function EvCalculatorWrapper({ smogonPkmnPool, isResultCalculated }) {
     event.preventDefault();
 
     // Pull urls for both Pokemon and fetch their data.
-    const chosenPkmnUrl = `${urlPokeApi}${globalPkmnPool[chosenPkmn]}`;
-    const targetPkmnUrl = `${urlPokeApi}${globalPkmnPool[targetPkmn]}`;
+    const chosenPkmnUrl = `${urlPokeApi}${pkmnEvState.globalPkmnPool[chosenPkmn]}`;
+    const targetPkmnUrl = `${urlPokeApi}${pkmnEvState.globalPkmnPool[targetPkmn]}`;
 
     // Fetch data for both
     const chosenPkmnPokeApiData = await fetchData(chosenPkmnUrl);
@@ -97,6 +97,7 @@ function EvCalculatorWrapper({ smogonPkmnPool, isResultCalculated }) {
       </form>
       {isResultCalculated ? (
         <EvCalculator
+          chosenPkmn={chosenPkmn}
           chosenPkmnApi={chosenPkmnApi}
           targetPkmnApi={targetPkmnApi}
           targetPkmnSmogon={targetPkmnSmogon}
