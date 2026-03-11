@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 
 // Scripts to aid in computation
 import computeEvSpread from "../../services/computeEvSpread.js";
@@ -12,12 +12,19 @@ import natureStats from "./../../data/natureStatBuffs.json";
 // Import components
 import EvCalculatorResults from "./EvCalculatorResults.jsx";
 
+// Import context
+import { appContext } from "../../App.jsx";
+
 function EvCalculator({
+  chosenPkmn,
   chosenPkmnApi,
   targetPkmnApi,
   targetPkmnSmogon,
   counterType,
 }) {
+  // Import dispatch to update variables
+  const { dispatch, pkmnEvActions, pkmnEvState } = useContext(appContext);
+
   // Helper Functions for Calculations
   function getBaseStats(pokeApiData) {
     const stats = pokeApiData["stats"]; // array with six objects, one per stat
@@ -431,7 +438,8 @@ function EvCalculator({
   // ----------------------------------------------------------------------------------- //
   // ----------------------------------------------------------------------------------- //
 
-  const [finalEvSpread, setFinalEvSpread] = useState("");
+  // const [finalEvSpread, setFinalEvSpread] = useState("");
+  let finalEvSpread = "";
   useEffect(() => {
     // If Smogon set cannot be found, do not run this useEffect
     if (typeof targetPkmnSmogon === "string") {
@@ -542,17 +550,36 @@ function EvCalculator({
         }
       }
       console.log(bestChosenEvSpread);
-      setFinalEvSpread(bestChosenEvSpread);
+      dispatch({
+        type: pkmnEvActions.setCalcdPkmnEv,
+        name: chosenPkmn,
+        id: pkmnEvState.globalPkmnPool[chosenPkmn],
+        finalSpread: bestChosenEvSpread,
+      });
       return;
     }
 
     performCalc();
   }, [chosenPkmnApi, targetPkmnApi]);
   // Results displayed on app from here
+
+  // Set finalEvSpread (and other helpful attributes) to state var in reducer only if the evSpread
+  // is something not undefined
+  // useEffect(() => {
+  //   if (finalEvSpread["evSpread"]) {
+  //     console.log("what do we have here");
+  //     console.log(finalEvSpread);
+  //     dispatch({
+  //       type: pkmnEvActions.setCalcdPkmnEv,
+  //       name: { chosenPkmn },
+  //       finalSpread: { finalEvSpread },
+  //     });
+  //   }
+  //  }, [finalEvSpread]);
   return typeof targetPkmnSmogon === "string" ? (
     <p>The target Pokemon cannot be found</p>
   ) : (
-    <EvCalculatorResults finalEvSpread={finalEvSpread} />
+    <EvCalculatorResults />
   );
 }
 

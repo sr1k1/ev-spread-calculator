@@ -3,7 +3,7 @@ import { useState, useContext, useEffect } from "react";
 import { appContext } from "../App";
 
 function PkmnSelector({ selectorId, label, pkmn, setPkmn }) {
-  const { globalPkmnPool } = useContext(appContext);
+  const { pkmnEvState } = useContext(appContext);
 
   // Use the pkmnObj (in this case, the smogon list) to construct a jsx object that sandwiches
   // the Pokemon names into options elements.
@@ -31,7 +31,7 @@ function PkmnSelector({ selectorId, label, pkmn, setPkmn }) {
   // useEffect(() => {
   //   if (!(debouncedPkmn === "")) {
   //     // turn off debouncing checker
-  //     setDebouncedList(Object.keys(globalPkmnPool));
+  //     setDebouncedList(Object.keys(pkmnEvState.globalPkmnPool));
   //   } else {
   //     setDebouncedList([]);
   //   }
@@ -42,7 +42,7 @@ function PkmnSelector({ selectorId, label, pkmn, setPkmn }) {
   //   {debouncedDataList.map((pkmnName) => {
   //     // Map each key of object (Pokemon name) to Pokemon id on website when creating option for
   //     // dropdown menu
-  //     return <option value={pkmnName} key={globalPkmnPool[pkmnName]} />;
+  //     return <option value={pkmnName} key={pkmnEvState.globalPkmnPool[pkmnName]} />;
   //   })}
   // </datalist>
   return (
