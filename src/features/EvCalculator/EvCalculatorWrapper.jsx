@@ -16,7 +16,11 @@ import {
 // Import context from app.jsx
 import { appContext } from "../../App.jsx";
 
-function EvCalculatorWrapper({ smogonPkmnPool, isResultCalculated }) {
+function EvCalculatorWrapper({
+  smogonPkmnPool,
+  isResultCalculated,
+  updateAirTable,
+}) {
   // Import Pokemon pool to retrieve and fetch endpoints
   const { dispatch, pkmnEvActions, pkmnEvState } = useContext(appContext);
   const urlPokeApi = "https://pokeapi.co/api/v2/pokemon/";
@@ -102,6 +106,7 @@ function EvCalculatorWrapper({ smogonPkmnPool, isResultCalculated }) {
           targetPkmnApi={targetPkmnApi}
           targetPkmnSmogon={targetPkmnSmogon}
           counterType={counterType}
+          updateAirTable={updateAirTable}
         />
       ) : (
         <></>

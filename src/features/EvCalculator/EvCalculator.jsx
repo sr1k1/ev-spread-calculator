@@ -21,6 +21,7 @@ function EvCalculator({
   targetPkmnApi,
   targetPkmnSmogon,
   counterType,
+  updateAirTable,
 }) {
   // Import dispatch to update variables
   const { dispatch, pkmnEvActions, pkmnEvState } = useContext(appContext);
@@ -579,7 +580,7 @@ function EvCalculator({
   return typeof targetPkmnSmogon === "string" ? (
     <p>The target Pokemon cannot be found</p>
   ) : (
-    <EvCalculatorResults />
+    <EvCalculatorResults updateAirTable={updateAirTable} />
   );
 }
 

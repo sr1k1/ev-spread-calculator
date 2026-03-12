@@ -3,7 +3,6 @@ import { appContext } from "../App";
 
 // import helper functions
 import { makeOptions, fetchData } from "../services/helperFunctions";
-import { UNSAFE_getHydrationData } from "react-router";
 
 // Repeated airtable creds, sorry
 // Airtable
@@ -21,36 +20,43 @@ function SaveSpread() {
 
   useEffect(() => {
     console.log(pkmnEvState.savedTeam);
-    // Update database; create payload first
+    // Update database; create payload and fields first first
+
+    const fields = {};
+
+    for (const pkmnIx of Object.keys(pkmnEvState.savedTeam["members"])) {
+      fields[pkmnIx] = JSON.stringify(pkmnEvState.savedTeam["members"][pkmnIx]);
+    }
     const payload = {
-      records: {
-        id: pkmnEvState.recordId,
-        fields: JSON.stringify(pkmnEvState.savedTeam["members"]),
-      },
+      records: [
+        {
+          id: pkmnEvState.recordId,
+          fields: fields,
+        },
+      ],
     };
-    console.log("hi");
-    console.log(payload);
 
     const options = makeOptions("PATCH", token, payload);
 
     // Send request
-    // try {
-    //   dispatch({ type: pkmnEvState.isSaving, saveState: true });
+    async function saveToDb() {
+      try {
+        dispatch({ type: pkmnEvActions.isSaving, saveState: true });
 
-    //   const records = await fetchData(urlTeamComp, options);
+        const records = await fetchData(urlTeamComp, options);
 
-    //   // output not needed; we already updated the localdatabase
-    // } catch (error) {
-    //   dispatch({ type: pkmnEvState.setLoadError, error });
+        // output not needed; we already updated the localdatabase
+      } catch (error) {
+        dispatch({ type: pkmnEvActions.setLoadError, error });
 
-    //   // Revert saveState
-    //   // dispatch({ type: pkmnEvState.revertSavedTeam });
-    // } finally {
-    //   dispatch({ type: pkmnEvState.isSaving, saveState: false });
-    // }
-
-    // return;
-  }, [pkmnEvActions.saveEvSpread]);
+        // Revert saveState
+        dispatch({ type: pkmnEvActions.revertSavedTeam });
+      } finally {
+        dispatch({ type: pkmnEvActions.isSaving, saveState: false });
+      }
+    }
+    saveToDb();
+  }, [pkmnEvState.savedTeam]);
 
   return (
     <>

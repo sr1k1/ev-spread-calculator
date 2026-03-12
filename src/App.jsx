@@ -70,6 +70,91 @@ function App() {
   // Smogon Pokemon Showdown
   const urlShowdown = "https://data.pkmn.cc/sets/gen9ou.json";
 
+  // ============================= Fetch-related functions ================================ //
+
+  async function updateAirTable() {
+    // Update database; create payload and fields first
+    const fields = {};
+
+    // Stringify the data inside each key's associated object. For those that have nothing, set
+    // that value to null
+    const iterIx = [1, 2, 3, 4, 5, 6];
+    for (const pkmnIx of iterIx) {
+      if (!(pkmnIx in pkmnEvState.savedTeam["members"])) {
+        fields[pkmnIx] = null;
+        continue;
+      }
+      fields[pkmnIx] = JSON.stringify(pkmnEvState.savedTeam["members"][pkmnIx]);
+    }
+
+    // for (const pkmnIx of Object.keys(pkmnEvState.savedTeam["members"])) {
+    //   fields[pkmnIx] = JSON.stringify(pkmnEvState.savedTeam["members"][pkmnIx]);
+    // }
+    const payload = {
+      records: [
+        {
+          id: pkmnEvState.recordId,
+          fields: fields,
+        },
+      ],
+    };
+
+    const options = makeOptions("PATCH", token, payload);
+
+    console.log("-----begin button-----");
+    console.log(options);
+    console.log(urlTeamComp);
+    console.log(token);
+
+    // Send request
+    try {
+      dispatch({ type: pkmnEvActions.isSaving, saveState: true });
+
+      const records = await fetchData(urlTeamComp, options);
+
+      // output not needed; we already updated the localdatabase
+    } catch (error) {
+      dispatch({ type: pkmnEvActions.setLoadError, error });
+
+      // Revert saveState
+      dispatch({ type: pkmnEvActions.revertSavedTeam }); //change
+    } finally {
+      dispatch({ type: pkmnEvActions.isSaving, saveState: false });
+    }
+    return;
+  }
+
+  async function updateTitle(newTitle) {
+    // Just want to update title, so reflect that in payload
+    const payload = {
+      records: [
+        {
+          id: pkmnEvState.recordId,
+          fields: { "Team Title": newTitle },
+        },
+      ],
+    };
+    const options = makeOptions("PATCH", token, payload);
+
+    console.log(options);
+    try {
+      dispatch({ type: pkmnEvActions.isSaving, saveState: true });
+
+      const records = await fetchData(urlTeamComp, options);
+
+      // output not needed; we already updated the localdatabase
+    } catch (error) {
+      dispatch({ type: pkmnEvActions.setLoadError, error });
+
+      // Revert saveState
+      dispatch({ type: pkmnEvActions.revertTitle });
+    } finally {
+      dispatch({ type: pkmnEvActions.isSaving, saveState: false });
+    }
+
+    return;
+  }
+
   // ============================== Loading all Pokemon data ============================== //
   let records = "";
   useEffect(() => {
@@ -124,6 +209,8 @@ function App() {
                 <EvCalcPage
                   smogonPkmnPool={pkmnEvState.smogonPkmnPool}
                   isResultCalculated={pkmnEvState.isResultCalculated}
+                  updateAirTable={updateAirTable}
+                  updateTitle={updateTitle}
                 />
               }
             />

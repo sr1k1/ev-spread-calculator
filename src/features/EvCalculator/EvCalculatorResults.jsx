@@ -2,17 +2,17 @@
 import { spreadToExport } from "../../services/spreadToExport";
 
 // Components
-import SaveSpread from "./../../shared/SaveSpread.jsx";
+// import SaveSpread from "./../../shared/SaveSpread.jsx";
+import ChangeButton from "../../shared/ChangeButton.jsx";
 
 import { useContext } from "react";
 import { appContext } from "../../App";
 
-function EvCalculatorResults() {
+function EvCalculatorResults({ updateAirTable }) {
   // Establish context and pull out calc'd spread
-  const { dispatch, pkmnEvActions, pkmnEvState } = useContext(appContext);
+  const { pkmnEvState } = useContext(appContext);
 
   const textifiedSpread = spreadToExport(pkmnEvState.calcdPkmnEv);
-  const savedTeamDisp = JSON.stringify(pkmnEvState.savedTeam);
 
   return (
     <div>
@@ -21,7 +21,18 @@ function EvCalculatorResults() {
         {pkmnEvState.calcdPkmnEv["name"]}
       </p>
       <p>{textifiedSpread}</p>
-      <SaveSpread />
+      <ChangeButton
+        buttonName={"Save"}
+        buttonFcn={"save"}
+        pkmn={"null"}
+        updateAirTable={updateAirTable}
+      />
+      <ChangeButton
+        buttonName={"Delete"}
+        buttonFcn={"delete"}
+        pkmn={pkmnEvState.calcdPkmnEv["name"]}
+        updateAirTable={updateAirTable}
+      />
     </div>
   );
 }
