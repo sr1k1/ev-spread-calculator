@@ -9,17 +9,9 @@ import { appContext } from "../../App";
 function PokemonCard({ dispPkmn, updateAirTable }) {
   const { pkmnEvState } = useContext(appContext);
   return (
-    <div className={styles.showLineBreak}>
+    <div className={styles.cardProps}>
       <h3>{dispPkmn["name"]}</h3>
       <p>{spreadToExport(dispPkmn)}</p>
-      {/* <button
-        onClick={() => {
-          console.log(pkmnEvState.savedTeam);
-          console.log(dispPkmn["name"]);
-        }}
-      >
-        Deleteu
-      </button> */}
       {/* <ChangeButton
         buttonName={"Delete"}
         buttonFcn={"delete"}

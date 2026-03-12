@@ -2,6 +2,9 @@ import { useState, useContext, useEffect } from "react";
 
 import { appContext } from "../App";
 
+// Style
+import styles from "./PkmnSelector.module.css";
+
 function PkmnSelector({ selectorId, label, pkmn, setPkmn }) {
   const { pkmnEvState } = useContext(appContext);
 
@@ -47,14 +50,18 @@ function PkmnSelector({ selectorId, label, pkmn, setPkmn }) {
   // </datalist>
   return (
     <>
-      <label htmlFor={selectorId}>{label}</label>
-      <input
-        id={selectorId}
-        list={`${selectorId}List`}
-        onChange={(event) => {
-          setPkmn(event.target.value);
-        }}
-      ></input>
+      <div className={styles.separation}>
+        <label className={styles.labelSize} htmlFor={selectorId}>
+          {label}
+        </label>
+        <input
+          id={selectorId}
+          list={`${selectorId}List`}
+          onChange={(event) => {
+            setPkmn(event.target.value);
+          }}
+        ></input>
+      </div>
     </>
   );
 }

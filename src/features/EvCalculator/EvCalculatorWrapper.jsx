@@ -86,7 +86,6 @@ function EvCalculatorWrapper({
     <>
       <form onSubmit={handleGens}>
         <GenSelectors id={"evCalc"} setGen={setGen} setTier={setTier} />
-        <button>Set Generation and Tier</button>
       </form>
       <form onSubmit={handleEvComputation}>
         <PkmnSelector
@@ -111,7 +110,6 @@ function EvCalculatorWrapper({
           }}
         >
           <option value="offensive">Offensive</option>
-          <option value="defensive">Defensive</option>
         </select>
         <br />
         <button>Compute Ev Spread</button>

@@ -1,0 +1,14 @@
+.genTierOrientation {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.boxSep {
+  display: flex;
+  gap: 10px;
+}
+
+.labelSize {
+  font-size: 18px;
+}

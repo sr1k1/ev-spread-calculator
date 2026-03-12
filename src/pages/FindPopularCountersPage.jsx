@@ -14,6 +14,9 @@ import {
   findPkmnInSmogonDb,
 } from "../services/helperFunctions";
 
+// styling
+import styles from "./FindPopularCountersPage.module.css";
+
 function FindPopularCountersPage({ updateAirTable, updateTitle }) {
   // Establish generation and tier of Pokemon
   const [gen, setGen] = useState("9");
@@ -38,7 +41,6 @@ function FindPopularCountersPage({ updateAirTable, updateTitle }) {
     // Combine gen and tier information using helper function
     const genPath = getPlayFormat(gen, tier, "stats");
 
-    console.log(genPath);
     setSearchGenUrl(genPath);
   }
 
@@ -47,8 +49,6 @@ function FindPopularCountersPage({ updateAirTable, updateTitle }) {
     if (searchGenUrl) {
       fetchData(searchGenUrl).then((pkmnSmogonSets) => {
         setSearchDb(pkmnSmogonSets);
-        console.log("Done!");
-        console.log(pkmnSmogonSets);
       });
     }
   }, [searchGenUrl]);
@@ -68,13 +68,11 @@ function FindPopularCountersPage({ updateAirTable, updateTitle }) {
     );
 
     setSearchPkmnSmogon(searchPkmnSmogonData);
-    console.log(searchPkmnSmogon);
     setHasSubmitted(true);
   }
 
   function findCounters() {
     const counters = Object.keys(searchPkmnSmogon["counters"]);
-    console.log(counters);
 
     if (counters.length === 0) {
       return "No counters to be found in this tier. You can try experimenting with Pokemon from lower tiers. ";
@@ -90,7 +88,6 @@ function FindPopularCountersPage({ updateAirTable, updateTitle }) {
     <>
       <form onSubmit={handleGens}>
         <GenSelectors id={"findCounters"} setGen={setGen} setTier={setTier} />
-        <button>Set Generation and Tier</button>
       </form>
       <form onSubmit={handlePkmnChoice}>
         <PkmnSelector
@@ -102,10 +99,10 @@ function FindPopularCountersPage({ updateAirTable, updateTitle }) {
         <button>Find Counters</button>
       </form>
       {hasSubmitted ? (
-        <>
+        <div className={styles.resultsAgain}>
           <p>The following Pokemon are popular counters to your selection:</p>
           {findCounters()}
-        </>
+        </div>
       ) : (
         <p>
           <></>

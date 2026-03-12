@@ -6,6 +6,9 @@ import { appContext } from "./../../App.jsx";
 import PokemonCard from "./PokemonCard.jsx";
 import TeamNameCard from "./TeamNameCard.jsx";
 
+// Styles
+import styles from "./TeamArea.module.css";
+
 // Area that shows up for saved team
 
 function TeamArea({ updateAirTable, updateTitle }) {
@@ -45,36 +48,39 @@ function TeamArea({ updateAirTable, updateTitle }) {
     // call function to post result to airtable if we are editing
     if (isTitleEditing) {
       updateTitle();
-      console.log(pkmnEvState.teamTitle);
       setIsTitleEditing(false);
     }
   }, [pkmnEvState.teamTitle]);
 
   return (
     <>
-      <h3>Pokemon Saved to Your Team</h3>
+      <h2 className={styles.sectionTitle}>Pokemon Saved to Your Team</h2>
       <form onSubmit={handleUpdate}>
         {isTitleEditing ? (
           <>
-            <label htmlFor={"setTitle"}>{"Set Title"}</label>
+            <label htmlFor={"setTitle"} className={styles.teamTitle}>
+              {"Set Title"}
+            </label>
             <input
               type="text"
               id={"setTitle"}
               value={title}
               onChange={handleEdit}
+              className={styles.teamTitle}
             ></input>
           </>
         ) : (
           <div>
-            <h4>
+            <h3>
               <span
+                className={styles.teamTitle}
                 onClick={() => {
                   setIsTitleEditing(true);
                 }}
               >
                 {`Team Name: ${title}`}
               </span>
-            </h4>
+            </h3>
           </div>
         )}
       </form>
@@ -82,17 +88,18 @@ function TeamArea({ updateAirTable, updateTitle }) {
         <p>Loading</p>
       ) : (
         <>
-          <h3>{pkmnEvState.savedTeam["Team Name"]}</h3>
-          {Object.keys(pkmnEvState.savedTeam["members"]).map((memberId) => {
-            const savedMember = pkmnEvState.savedTeam["members"][memberId];
-            return (
-              <PokemonCard
-                key={savedMember["id"]}
-                dispPkmn={savedMember}
-                updateAirTable={updateAirTable}
-              />
-            );
-          })}
+          <div className={styles.cardsBox}>
+            {Object.keys(pkmnEvState.savedTeam["members"]).map((memberId) => {
+              const savedMember = pkmnEvState.savedTeam["members"][memberId];
+              return (
+                <PokemonCard
+                  key={savedMember["id"]}
+                  dispPkmn={savedMember}
+                  updateAirTable={updateAirTable}
+                />
+              );
+            })}
+          </div>
         </>
       )}
     </>

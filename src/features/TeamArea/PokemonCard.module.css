@@ -1,3 +1,7 @@
-.showLineBreak {
+.cardProps {
   white-space: pre-line;
+  background-color: aquamarine;
+  border-radius: 10px;
+  padding: 0 5px;
+  border: 1px solid rgb(0, 137, 155);
 }

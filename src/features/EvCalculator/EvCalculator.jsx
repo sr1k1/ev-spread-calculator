@@ -185,6 +185,7 @@ function EvCalculator({
     };
   }
 
+  // =========== use useCallback to store these calc-heavy functions ===== //
   function calcHP(pkmnBS, pkmnEvs, level = 100) {
     return (
       Math.floor(
@@ -252,6 +253,8 @@ function EvCalculator({
       ),
     };
   }
+
+  // ================== cached ======================= //
 
   function calcDmgDealt(
     targetPkmnStats,
@@ -550,7 +553,6 @@ function EvCalculator({
           }
         }
       }
-      console.log(bestChosenEvSpread);
       dispatch({
         type: pkmnEvActions.setCalcdPkmnEv,
         name: chosenPkmn,
@@ -562,21 +564,7 @@ function EvCalculator({
 
     performCalc();
   }, [chosenPkmnApi, targetPkmnApi]);
-  // Results displayed on app from here
 
-  // Set finalEvSpread (and other helpful attributes) to state var in reducer only if the evSpread
-  // is something not undefined
-  // useEffect(() => {
-  //   if (finalEvSpread["evSpread"]) {
-  //     console.log("what do we have here");
-  //     console.log(finalEvSpread);
-  //     dispatch({
-  //       type: pkmnEvActions.setCalcdPkmnEv,
-  //       name: { chosenPkmn },
-  //       finalSpread: { finalEvSpread },
-  //     });
-  //   }
-  //  }, [finalEvSpread]);
   return typeof targetPkmnSmogon === "string" ? (
     <p>The target Pokemon cannot be found</p>
   ) : (

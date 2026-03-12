@@ -23,7 +23,6 @@ function ChangeButton({ buttonName, buttonFcn, pkmn, updateAirTable }) {
   }
 
   useEffect(() => {
-    console.log(pkmnEvState.savedTeam);
     updateAirTable();
   }, [pkmnEvState.savedTeam]);
 
