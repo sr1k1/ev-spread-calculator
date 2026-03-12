@@ -1,4 +1,4 @@
-import { useReducer, useEffect, createContext } from "react";
+import { useReducer, useEffect, useState, createContext } from "react";
 import "./App.css";
 
 // React router components
@@ -22,9 +22,6 @@ import { pkmnEndpoints } from "./data/pkmnEndpoints.json";
 
 // Helper functions
 import { fetchData, makeOptions } from "./services/helperFunctions.js";
-
-// Delete below import when ready to fetch from server --------------------------------------
-import pkmnSmogonSets from "./temp_data/gen9ou.json";
 
 // ------------------------------------------------------------------------------------------
 
@@ -51,6 +48,7 @@ function App() {
           type: pkmnEvActions.setPageTitle,
           pageTitle: "Search Common Counters",
         });
+        break;
       case "/about":
         dispatch({ type: pkmnEvActions.setPageTitle, pageTitle: "About" });
         break;
@@ -68,7 +66,9 @@ function App() {
   const token = `Bearer ${import.meta.env.VITE_KEY}`;
 
   // Smogon Pokemon Showdown
-  const urlShowdown = "https://data.pkmn.cc/sets/gen9ou.json";
+  const [urlShowdown, setUrlShowdown] = useState(
+    "https://data.pkmn.cc/sets/gen9ou.json",
+  );
 
   // ============================= Fetch-related functions ================================ //
 
@@ -156,17 +156,16 @@ function App() {
   }
 
   // ============================== Loading all Pokemon data ============================== //
-  let records = "";
+  // use a useEffect() to update smogon database whenever the url is changed
   useEffect(() => {
     // Smogon data fetch (for popular EV spreads)
-    // -------------------------------------------------------------
-    // Uncomment below when we are ready to fetch data straight from server
-    // fetchData(urlShowdown).then((pkmnSmogonSets) =>
-    //   dispatch({ type: pkmnEvActions.setSmogonPkmnPool, pkmnSmogonSets }),
-    // );
+    fetchData(urlShowdown).then((pkmnSmogonSets) =>
+      dispatch({ type: pkmnEvActions.setSmogonPkmnPool, pkmnSmogonSets }),
+    );
+  }, [urlShowdown]);
 
-    // Delete lines below when we are ready to fetch from server
-    dispatch({ type: pkmnEvActions.setSmogonPkmnPool, pkmnSmogonSets });
+  let records = "";
+  useEffect(() => {
     // ------------------------------------------------------------
     // PokeApi Endpoints for data on every pokemon
     dispatch({ type: pkmnEvActions.setGlobalPkmnPool, pkmnEndpoints });
@@ -211,10 +210,20 @@ function App() {
                   isResultCalculated={pkmnEvState.isResultCalculated}
                   updateAirTable={updateAirTable}
                   updateTitle={updateTitle}
+                  setUrlShowdown={setUrlShowdown}
                 />
               }
             />
-            <Route path="/counters" element={<FindPopularCountersPage />} />
+            <Route
+              path="/counters"
+              element={
+                <FindPopularCountersPage
+                  updateAirTable={updateAirTable}
+                  updateTitle={updateTitle}
+                  setUrlShowdown={setUrlShowdown}
+                />
+              }
+            />
             <Route path="/about" element={<About />} />
             <Route path="/*" />
           </Routes>

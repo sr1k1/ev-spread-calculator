@@ -9,6 +9,7 @@ function EvCalcPage({
   isResultCalculated,
   updateAirTable,
   updateTitle,
+  setUrlShowdown,
 }) {
   return (
     <>
@@ -16,6 +17,7 @@ function EvCalcPage({
         smogonPkmnPool={smogonPkmnPool}
         isResultCalculated={isResultCalculated}
         updateAirTable={updateAirTable}
+        setUrlShowdown={setUrlShowdown}
       />
       <TeamArea updateAirTable={updateAirTable} updateTitle={updateTitle} />
     </>
