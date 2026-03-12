@@ -61,6 +61,16 @@ function PkmnSelector({ selectorId, label, pkmn, setPkmn }) {
             setPkmn(event.target.value);
           }}
         ></input>
+        <datalist id={`${selectorId}List`}>
+          {Object.keys(pkmnEvState.globalPkmnPool).map((pkmnName) => {
+            return (
+              <option
+                value={pkmnName}
+                key={pkmnEvState.globalPkmnPool[pkmnName]}
+              />
+            );
+          })}
+        </datalist>
       </div>
     </>
   );
