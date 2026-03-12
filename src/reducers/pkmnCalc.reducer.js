@@ -10,6 +10,10 @@ const actions = {
   saveEvSpread: "saveEvSpread",
   setCalcdPkmnEv: "setCalcdPkmnEv",
   revertSavedTeam: "revertSavedTeam",
+  deleteEvSpread: "deleteEvSpread",
+  alterSavedTeam: "alterSavedTeam",
+  setTeamTitle: "setTeamTitle",
+  revertTitle: "revertTitle",
 };
 
 const initialState = {
@@ -22,6 +26,8 @@ const initialState = {
   loading: false,
   recordId: "",
   savedTeam: { members: { 1: { id: 3455, name: "waxen", evSpread: "None" } } },
+  teamTitle: "",
+  oldTitle: "",
   savedTeamSafeCopy: {},
   calcdPkmnEv: {
     name: "Pokemon 2.0",
@@ -87,6 +93,7 @@ function reducer(state = initialState, action) {
         members: {},
       };
 
+      console.log(records);
       // iterate through iterOrder and save team-members from cloud to local team
       for (const ix of iterOrder) {
         const slotData = records[0]["fields"][ix];
@@ -96,7 +103,14 @@ function reducer(state = initialState, action) {
           team["members"][ix] = JSON.parse(slotData);
         }
       }
-      return { ...state, savedTeam: team, recordId: records[0]["id"] };
+      console.log(records);
+      console.log(team);
+      return {
+        ...state,
+        teamTitle: records[0]["fields"]["Team Name"],
+        savedTeam: team,
+        recordId: records[0]["id"],
+      };
 
     case actions.setCalcdPkmnEv:
       return {
@@ -109,37 +123,129 @@ function reducer(state = initialState, action) {
           evSpread: action.finalSpread["evSpread"],
         },
       };
-    case actions.saveEvSpread:
+    // case actions.saveEvSpread:
+    //   // Save pre-updated object
+    //   state.savedTeamSafeCopy = state.savedTeam;
+
+    //   const availableSlots = [1, 2, 3, 4, 5, 6];
+    //   let firstEmptyIx = -1;
+    //   for (const savedMemberIx of availableSlots) {
+    //     // if no key, there exists empty slot
+    //     if (!(savedMemberIx in state.savedTeam["members"])) {
+    //       firstEmptyIx = savedMemberIx;
+    //       // state.savedTeam["members"][savedMemberIx] = state.calcdPkmnEv;
+    //       break;
+    //     }
+    //   }
+    //   // construct object to store new Pokemon
+    //   const updatedPkmns = {
+    //     ...state,
+    //     savedTeam: {
+    //       ...state.savedTeam,
+    //       members: {
+    //         ...state.savedTeam["members"],
+    //         [firstEmptyIx]: state.calcdPkmnEv,
+    //       },
+    //     },
+    //   };
+
+    //   return updatedPkmns;
+    // case actions.revertSavedTeam:
+    //   return {
+    //     ...state,
+    //     savedTeam: state.savedTeamSafeCopy,
+    //   };
+    // case actions.deleteEvSpread:
+    //   // access to: pkmn
+    //   // Save pre-updated object
+    //   state.savedTeamSafeCopy = state.savedTeam;
+
+    //   const avail = [1, 2, 3, 4, 5, 6];
+    //   let pkmnIx = -1;
+    //   for (const savedMemberIx of avail) {
+    //     // if pokemon name matches, set index
+    //     if (state.savedTeam["members"][savedMemberIx]["name"] === action.pkmn) {
+    //       pkmnIx = savedMemberIx;
+    //       break;
+    //     }
+    //   }
+    //   // construct object to store new Pokemon
+    //   const updatedPkms = {
+    //     ...state,
+    //     savedTeam: {
+    //       ...state.savedTeam,
+    //       members: {
+    //         ...state.savedTeam["members"],
+    //         [pkmnIx]: "",
+    //       },
+    //     },
+    //   };
+
+    //   // Delete pkmnIx
+    //   delete updatedPkms["savedTeam"]["members"][pkmnIx];
+    //   return updatedPkms;
+    case actions.alterSavedTeam:
       // Save pre-updated object
-      // state.savedTeamSafeCopy = state.savedTeam;
+      state.savedTeamSafeCopy = state.savedTeam;
 
       const availableSlots = [1, 2, 3, 4, 5, 6];
-      let firstEmptyIx = -1;
-      for (const savedMemberIx of availableSlots) {
-        // if no key, there exists empty slot
-        if (!(savedMemberIx in state.savedTeam["members"])) {
-          firstEmptyIx = savedMemberIx;
-          // state.savedTeam["members"][savedMemberIx] = state.calcdPkmnEv;
-          break;
+      let updatedPkmns = {};
+      for (const chosenMemberIx of availableSlots) {
+        // depending on if we are saving or deleting, run a different if statement
+        if (action.modifyType === "save") {
+          if (!(chosenMemberIx in state.savedTeam["members"])) {
+            updatedPkmns = {
+              ...state,
+              savedTeam: {
+                ...state.savedTeam,
+                members: {
+                  ...state.savedTeam["members"],
+                  [chosenMemberIx]: state.calcdPkmnEv,
+                },
+              },
+            };
+            return updatedPkmns;
+          }
+        }
+        if (action.modifyType === "delete") {
+          if (chosenMemberIx in state.savedTeam["members"]) {
+            if (
+              state.savedTeam["members"][chosenMemberIx]["name"] === action.pkmn
+            ) {
+              updatedPkmns = {
+                ...state,
+                savedTeam: {
+                  ...state.savedTeam,
+                  members: {
+                    ...state.savedTeam["members"],
+                    [chosenMemberIx]: "",
+                  },
+                },
+              };
+              delete updatedPkmns["savedTeam"]["members"][chosenMemberIx];
+
+              return updatedPkmns;
+            }
+          }
         }
       }
       // construct object to store new Pokemon
-      const updatedPkmns = {
-        ...state,
-        savedTeam: {
-          ...state.savedTeam,
-          members: {
-            ...state.savedTeam["members"],
-            [firstEmptyIx]: state.calcdPkmnEv,
-          },
-        },
-      };
-
       return updatedPkmns;
-    case actions.revertSavedTeam:
+    case actions.setTeamTitle:
+      console.log("I am here");
+      console.log(action.newTitle);
+      // set old title to current title before the return
+      state.oldTitle = state.teamTitle;
       return {
         ...state,
-        savedTeam: state.savedTeamSafeCopy,
+        teamTitle: action.newTitle,
+        savedTeam: { ...state.savedTeam, "Team Title": action.newTitle },
+      };
+    case actions.revertTitle:
+      return {
+        ...state,
+        teamTitle: state.oldTitle,
+        savedTeam: { ...state.savedTeam, "Team Title": state.oldTitle },
       };
   }
   return;
