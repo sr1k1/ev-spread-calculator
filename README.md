@@ -10,6 +10,8 @@ Dependencies:
 
 How to install and run:
 
+- Downloading the repo and running package.json should be all you need to install for the app!
+
 Details on API connection:
 
-Credentials (not) needed, services used:
+- Except for the connection to the database (Airtable), all other API connections do not require any credentials to access. I am using PokeApi and SmogonApi for my information.

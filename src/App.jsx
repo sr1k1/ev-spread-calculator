@@ -1,4 +1,10 @@
-import { useReducer, useEffect, useState, createContext } from "react";
+import {
+  useReducer,
+  useEffect,
+  useState,
+  createContext,
+  useCallback,
+} from "react";
 import "./App.css";
 
 // React router components
@@ -16,6 +22,7 @@ import Header from "./shared/Header.jsx";
 import FindPopularCountersPage from "./pages/FindPopularCountersPage.jsx";
 import EvCalcPage from "./pages/EvCalcPage.jsx";
 import About from "./pages/About.jsx";
+import NotFound from "./pages/NotFound.jsx";
 
 // Pokemon Endpoints .json file
 import { pkmnEndpoints } from "./data/pkmnEndpoints.json";
@@ -100,12 +107,6 @@ function App() {
     };
 
     const options = makeOptions("PATCH", token, payload);
-
-    console.log("-----begin button-----");
-    console.log(options);
-    console.log(urlTeamComp);
-    console.log(token);
-
     // Send request
     try {
       dispatch({ type: pkmnEvActions.isSaving, saveState: true });
@@ -136,7 +137,6 @@ function App() {
     };
     const options = makeOptions("PATCH", token, payload);
 
-    console.log(options);
     try {
       dispatch({ type: pkmnEvActions.isSaving, saveState: true });
 
@@ -224,8 +224,16 @@ function App() {
                 />
               }
             />
-            <Route path="/about" element={<About />} />
-            <Route path="/*" />
+            <Route
+              path="/about"
+              element={
+                <About
+                  updateAirTable={updateAirTable}
+                  updateTitle={updateTitle}
+                />
+              }
+            />
+            <Route path="/*" element={<NotFound />} />
           </Routes>
         </div>
       </appContext.Provider>

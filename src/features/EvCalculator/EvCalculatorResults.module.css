@@ -1,0 +1,16 @@
+.whiteLines {
+  white-space: pre-line;
+}
+
+.resultsSection {
+  background-color: rgb(243, 181, 255);
+  border: 1px solid #ad00c4;
+  border-radius: 6px;
+  margin-top: 10px;
+  padding: 8px;
+}
+
+.btnStyles {
+  display: flex;
+  gap: 3px;
+}

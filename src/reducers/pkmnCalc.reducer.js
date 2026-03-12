@@ -93,7 +93,6 @@ function reducer(state = initialState, action) {
         members: {},
       };
 
-      console.log(records);
       // iterate through iterOrder and save team-members from cloud to local team
       for (const ix of iterOrder) {
         const slotData = records[0]["fields"][ix];
@@ -103,8 +102,7 @@ function reducer(state = initialState, action) {
           team["members"][ix] = JSON.parse(slotData);
         }
       }
-      console.log(records);
-      console.log(team);
+
       return {
         ...state,
         teamTitle: records[0]["fields"]["Team Name"],
@@ -232,8 +230,6 @@ function reducer(state = initialState, action) {
       // construct object to store new Pokemon
       return updatedPkmns;
     case actions.setTeamTitle:
-      console.log("I am here");
-      console.log(action.newTitle);
       // set old title to current title before the return
       state.oldTitle = state.teamTitle;
       return {
