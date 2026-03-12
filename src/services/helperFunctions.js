@@ -37,6 +37,15 @@ const makeOptions = (methodUsed, token, payload = null) => {
   return options;
 };
 
+// ========================= Helper functions to narrow down generation ============================== //
+function getPlayFormat(gen, tier, area = "sets") {
+  if (area === "sets") {
+    return `https://data.pkmn.cc/sets/gen${gen}${tier}.json`;
+  }
+  if (area === "stats") {
+    return `https://data.pkmn.cc/stats/gen${gen}${tier}.json`;
+  }
+}
 // ======================== Name formatting-related operations ================================
 function formatPkmnName(name, useHyphenation = false) {
   let newName = "";
@@ -104,4 +113,5 @@ export {
   formatPkmnName,
   findPkmnInSmogonDb,
   formatMoveName,
+  getPlayFormat,
 };

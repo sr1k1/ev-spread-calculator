@@ -11,21 +11,26 @@ import {
   formatPkmnName,
   findPkmnInSmogonDb,
   formatMoveName,
+  getPlayFormat,
 } from "../../services/helperFunctions.js";
 
 // Import context from app.jsx
 import { appContext } from "../../App.jsx";
+import GenSelectors from "../../shared/GenSelectors.jsx";
 
 function EvCalculatorWrapper({
   smogonPkmnPool,
   isResultCalculated,
   updateAirTable,
+  setUrlShowdown,
 }) {
   // Import Pokemon pool to retrieve and fetch endpoints
   const { dispatch, pkmnEvActions, pkmnEvState } = useContext(appContext);
   const urlPokeApi = "https://pokeapi.co/api/v2/pokemon/";
 
   // States to track user input
+  const [gen, setGen] = useState("9");
+  const [tier, setTier] = useState("ubers");
   const [chosenPkmn, setChosenPkmn] = useState("");
   const [targetPkmn, setTargetPkmn] = useState("");
   const [counterType, setCounterType] = useState("offensive");
@@ -35,6 +40,14 @@ function EvCalculatorWrapper({
   const [targetPkmnApi, setTargetPkmnApi] = useState("");
   const [targetPkmnSmogon, setTargetPkmnSmogon] = useState("");
 
+  function handleGens(event) {
+    event.preventDefault();
+    // Combine gen and tier information using helper function
+    const genPath = getPlayFormat(gen, tier);
+
+    // Pass it back into App.jsx to compute appropriate smogonPool
+    setUrlShowdown(genPath);
+  }
   async function handleEvComputation(event) {
     event.preventDefault();
 
@@ -71,6 +84,10 @@ function EvCalculatorWrapper({
 
   return (
     <>
+      <form onSubmit={handleGens}>
+        <GenSelectors id={"evCalc"} setGen={setGen} setTier={setTier} />
+        <button>Set Generation and Tier</button>
+      </form>
       <form onSubmit={handleEvComputation}>
         <PkmnSelector
           selectorId="yourPokemon"
