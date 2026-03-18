@@ -9,12 +9,9 @@ async function fetchData(url, options = null) {
     } else {
       resp = await fetch(url);
     }
+    // If error in response, raise error
   } catch (error) {
     throw new Error(error.message);
-  }
-  // If response is not okay, raise error
-  if (!resp.ok) {
-    throw new Error(resp.message);
   }
 
   // Return retrieved data as parsed json object
