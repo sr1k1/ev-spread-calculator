@@ -121,6 +121,12 @@ function reducer(state = initialState, action) {
           evSpread: action.finalSpread["evSpread"],
         },
       };
+    case actions.revertSavedTeam:
+      return {
+        ...state,
+        savedTeam: state.savedTeamSafeCopy,
+      };
+    // Outdated functions (we now use modify) ================================
     // case actions.saveEvSpread:
     //   // Save pre-updated object
     //   state.savedTeamSafeCopy = state.savedTeam;
@@ -148,11 +154,6 @@ function reducer(state = initialState, action) {
     //   };
 
     //   return updatedPkmns;
-    // case actions.revertSavedTeam:
-    //   return {
-    //     ...state,
-    //     savedTeam: state.savedTeamSafeCopy,
-    //   };
     // case actions.deleteEvSpread:
     //   // access to: pkmn
     //   // Save pre-updated object
@@ -182,6 +183,7 @@ function reducer(state = initialState, action) {
     //   // Delete pkmnIx
     //   delete updatedPkms["savedTeam"]["members"][pkmnIx];
     //   return updatedPkms;
+    //  ===================================================================
     case actions.alterSavedTeam:
       // Save pre-updated object
       state.savedTeamSafeCopy = state.savedTeam;
